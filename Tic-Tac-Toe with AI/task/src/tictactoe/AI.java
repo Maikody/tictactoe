@@ -41,41 +41,25 @@ public class AI {
                 break;
             }
         } else if (this.level == Level.MEDIUM) {
-            while (true) {
-                int[] computerMoves = chooseNextMoveLevelMedium(gameField, symbol);
-                int[] opponentMoves = chooseNextMoveLevelMedium(gameField, opponentSymbol);
-                if (computerMoves[0] == 0 && opponentMoves[0] == 0) {
+            int[] computerMoves = chooseNextMoveLevelMedium(gameField, symbol);
+            int[] opponentMoves = chooseNextMoveLevelMedium(gameField, opponentSymbol);
+            if (computerMoves[0] == 0 && opponentMoves[0] == 0) {
+                while(true) {
                     computerFirstCoordinate = random.nextInt(3) + 1;
                     computerSecondCoordinate = random.nextInt(3) + 1;
                     if (!gameField[computerFirstCoordinate][computerSecondCoordinate * 2].equals(" ")) {
                         continue;
                     }
                     break;
-                } else if (computerMoves[0] != 0 && opponentMoves[0] == 0) {
-                    computerFirstCoordinate = computerMoves[0];
-                    computerSecondCoordinate = computerMoves[1];
-                    if (!gameField[computerFirstCoordinate][computerSecondCoordinate * 2].equals(" ")) {
-                        computerFirstCoordinate = random.nextInt(3) + 1;
-                        computerSecondCoordinate = random.nextInt(3) + 1;
-                        if (!gameField[computerFirstCoordinate][computerSecondCoordinate * 2].equals(" ")) {
-                            continue;
-                        }
-                        break;
-                    }
-                    break;
-                } else  {
-                    computerFirstCoordinate = opponentMoves[0];
-                    computerSecondCoordinate = opponentMoves[1];
-                    if (!gameField[computerFirstCoordinate][computerSecondCoordinate * 2].equals(" ")) {
-                        computerFirstCoordinate = random.nextInt(3) + 1;
-                        computerSecondCoordinate = random.nextInt(3) + 1;
-                        if (!gameField[computerFirstCoordinate][computerSecondCoordinate * 2].equals(" ")) {
-                            continue;
-                        }
-                        break;
-                    }
-                    break;
                 }
+            } else if (computerMoves[0] != 0 && opponentMoves[0] == 0) {
+                computerFirstCoordinate = computerMoves[0];
+                computerSecondCoordinate = computerMoves[1];
+
+            }
+            else {
+                computerFirstCoordinate = opponentMoves[0];
+                computerSecondCoordinate = opponentMoves[1];
             }
         } else {
             int[] computerMoves = bestMoveLevelHard(gameField, symbol);
@@ -97,10 +81,10 @@ public class AI {
                 if (gameField[i][j].equals(symbol)) {
                     inRowCounter++;
                 }
-                if (inRowCounter == 2 && j == 4) {
+                if (inRowCounter == 2 && j == 4 && gameField[i][6].equals(" ")) {
                     return new int[]{i, 3};
                 }
-                if (inRowCounter == 2 && j == 6 && gameField[i][4].equals(symbol)) {
+                if (inRowCounter == 2 && j == 6 && gameField[i][4].equals(symbol) && gameField[i][2].equals(" ")) {
                     return new int[]{i, 1};
                 }
                 if (inRowCounter == 2 && j == 6 && gameField[i][4].equals(" ")) {
@@ -120,10 +104,10 @@ public class AI {
                 if (gameField[i][j].equals(symbol)) {
                     inRowCounter++;
                 }
-                if (inRowCounter == 2 && i == 2) {
+                if (inRowCounter == 2 && i == 2 && gameField[3][j].equals(" ")) {
                     return new int[]{3, j/2};
                 }
-                if (inRowCounter == 2 && i == 3 && gameField[2][j].equals(symbol)) {
+                if (inRowCounter == 2 && i == 3 && gameField[2][j].equals(symbol) && gameField[1][j].equals(" ")) {
                     return new int[]{1, j/2};
                 }
                 if (inRowCounter == 2 && i == 3 && gameField[2][j].equals(" ")) {
@@ -143,10 +127,10 @@ public class AI {
                 if (j == i * 2 && gameField[i][j].equals(symbol)) {
                     inRowCounter++;
                 }
-                if (inRowCounter == 2 && i == 2 && j == 4) {
+                if (inRowCounter == 2 && i == 2 && j == 4 && gameField[3][6].equals(" ")) {
                     return new int[]{3, 3};
                 }
-                if (inRowCounter == 2 && i == 3 && j == 6 && gameField[2][4].equals(symbol)) {
+                if (inRowCounter == 2 && i == 3 && j == 6 && gameField[2][4].equals(symbol) && gameField[1][2].equals(" ")) {
                     return new int[]{1, 1};
                 }
                 if (inRowCounter == 2 && i == 3 && j == 6 && gameField[2][4].equals(" ")) {
@@ -162,16 +146,16 @@ public class AI {
                 if (j % 2 != 0) {
                     continue;
                 }
-                if (j == 9 - 1 - 2 * i && gameField[i][j].equals(symbol)) {
+                if (j == - 2 * i + 8 && gameField[i][j].equals(symbol)) {
                     inRowCounter++;
                 }
-                if (inRowCounter == 2 && i == 2 && j == 4) {
+                if (inRowCounter == 2 && i == 2 && j == 4 && gameField[3][2].equals(" ")) {
                     return new int[]{3, 1};
                 }
-                if (inRowCounter == 2 && i == 3 && j == 4 && gameField[2][4].equals(symbol)) {
+                if (inRowCounter == 2 && i == 3 && j == 2 && gameField[2][4].equals(symbol) && gameField[3][6].equals(" ")) {
                     return new int[]{1, 3};
                 }
-                if (inRowCounter == 2 && i == 3 && j == 4 && gameField[2][4].equals(" ")) {
+                if (inRowCounter == 2 && i == 3 && j == 2 && gameField[2][4].equals(" ")) {
                     return new int[]{2, 2};
                 }
             }
@@ -373,9 +357,9 @@ public class AI {
                     inRowCounter++;
                 }
             }
-            if (inRowCounter == 3) {
-                return true;
-            }
+        }
+        if (inRowCounter == 3) {
+            return true;
         }
 
         inRowCounter = 0;
@@ -385,15 +369,16 @@ public class AI {
                 if (j % 2 != 0) {
                     continue;
                 }
-                if (j == 6 * i && gameField[i][j].equals("X")) {
+                if (j == - 2 * i + 8 && gameField[i][j].equals(symbol)) {
                     inRowCounter++;
                 }
             }
-            if (inRowCounter == 3) {
-                return true;
-            }
-
         }
+
+        if (inRowCounter == 3) {
+            return true;
+        }
+
         return false;
     }
 

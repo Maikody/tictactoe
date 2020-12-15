@@ -329,14 +329,14 @@ public class Main {
                     oInRowCounter++;
                 }
             }
-            if (xInRowCounter == 3) {
-                System.out.println("X wins\n");
-                return true;
-            }
-            if (oInRowCounter == 3) {
-                System.out.println("O wins\n");
-                return true;
-            }
+        }
+        if (xInRowCounter == 3) {
+            System.out.println("X wins\n");
+            return true;
+        }
+        if (oInRowCounter == 3) {
+            System.out.println("O wins\n");
+            return true;
         }
 
         xInRowCounter = 0;
@@ -347,20 +347,20 @@ public class Main {
                 if (j % 2 != 0) {
                     continue;
                 }
-                if (j == 9 - 1 - 2 * i && gameField[i][j].equals("X")) {
+                if (j == - 2 * i + 8 && gameField[i][j].equals("X")) {
                     xInRowCounter++;
-                } else if (j == 9 - 1 - 2 * i && gameField[i][j].equals("O")) {
+                } else if (j == - 2 * i + 8 && gameField[i][j].equals("O")) {
                     oInRowCounter++;
                 }
             }
-            if (xInRowCounter == 3) {
-                System.out.println("X wins\n");
-                return true;
-            }
-            if (oInRowCounter == 3) {
-                System.out.println("O wins\n");
-                return true;
-            }
+        }
+        if (xInRowCounter == 3) {
+            System.out.println("X wins\n");
+            return true;
+        }
+        if (oInRowCounter == 3) {
+            System.out.println("O wins\n");
+            return true;
         }
 
         for (int i = 1; i < 4; i++) {
@@ -369,8 +369,8 @@ public class Main {
                     continue;
                 }
                 if (gameField[i][j].equals(" ")) {
-                    return false;
 //                    System.out.println("Game not finished");
+                    return false;
                 }
             }
         }
