@@ -23,7 +23,7 @@ public class User {
                     System.out.println("Coordinates should be from 1 to 3!");
                     continue;
                 }
-                if (!gameField[Main.processInputCoordinates(secondCoordinate)][firstCoordinate * 2].equals(" ")) {
+                if (!gameField[firstCoordinate][secondCoordinate * 2].equals(" ")) {
                     System.out.println("This cell is occupied! Choose another one!");
                     continue;
                 }

@@ -1,6 +1,6 @@
 package tictactoe;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -8,38 +8,35 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        while (gameDefinition()) {
-        }
-    }
+        while(true) {
+            generateGameField();
 
-    public static boolean gameDefinition() {
-        generateGameField();
-
-        System.out.println("Input command:");
-        String startOrEnd, whoStarts, opponent;
-        while (true) {
-            try {
-                String gameInputs = scanner.nextLine();
-                String[] gameInputsArray = gameInputs.trim().split("\\s+");
-                startOrEnd = gameInputsArray[0].toUpperCase();
-                if (startOrEnd.equals("EXIT")) {
-                    return false;
+            System.out.println("Input commands: [start][user/easy/medium/hard][user/easy/medium/hard] or [exit]");
+            String startOrEnd, whoStarts, opponent;
+            while (true) {
+                try {
+                    String gameInputs = scanner.nextLine();
+                    String[] gameInputsArray = gameInputs.trim().split("\\s+");
+                    startOrEnd = gameInputsArray[0].toUpperCase();
+                    if (startOrEnd.equals("EXIT")) {
+                        return;
+                    }
+                    whoStarts = gameInputsArray[1].toUpperCase();
+                    opponent = gameInputsArray[2].toUpperCase();
+                    break;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Bad parameters!");
                 }
-                whoStarts = gameInputsArray[1].toUpperCase();
-                opponent = gameInputsArray[2].toUpperCase();
-                break;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Bad parameters!");
             }
+
+            Object[] players = choosePlayersOfGame(whoStarts, opponent);
+
+            gameLoop(players);
         }
-        Object[] players = choosePlayersOfGame(whoStarts, opponent);
-
-        stepsOfGame(players);
-
-        return true;
     }
 
-    public static void stepsOfGame(Object[] players) {
+
+    public static void gameLoop(Object[] players) {
         if (players[0] instanceof AI && players[1] instanceof AI) {
             AI player1 = (AI) players[0];
             AI player2 = (AI) players[1];
@@ -58,6 +55,7 @@ public class Main {
                 }
             }
         } else if (players[0] instanceof User && players[1] instanceof AI) {
+            printGameField();
             User player1 = (User) players[0];
             AI player2 = (AI) players[1];
             while (!checkStateOfTheGame()) {
@@ -94,6 +92,7 @@ public class Main {
                 }
             }
         } else if (players[0] instanceof User && players[1] instanceof User){
+            printGameField();
             User player1 = (User) players[0];
             User player2 = (User) players[1];
             while (!checkStateOfTheGame()) {
@@ -130,6 +129,11 @@ public class Main {
             opponentAI.setLevel(AI.Level.MEDIUM);
             return new Object[]{new User("User 1"), opponentAI};
         }
+        if (player1.equals("USER") && player2.equals("HARD")) {
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.HARD);
+            return new Object[]{new User("User 1"), opponentAI};
+        }
         if (player1.equals("EASY") && player2.equals("USER")) {
             AI playerAI = new AI();
             playerAI.setLevel(AI.Level.EASY);
@@ -140,18 +144,16 @@ public class Main {
             playerAI.setLevel(AI.Level.MEDIUM);
             return new Object[]{playerAI, new User("User 2")};
         }
-        if (player1.equals("EASY") && player2.equals("MEDIUM")) {
+        if (player1.equals("HARD") && player2.equals("USER")) {
             AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.EASY);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.MEDIUM);
-            return new Object[]{playerAI, opponentAI};
+            playerAI.setLevel(AI.Level.HARD);
+            return new Object[]{playerAI, new User("User 2")};
         }
-        if (player1.equals("MEDIUM") && player2.equals("EASY")) {
+        if (player1.equals("EASY") && player2.equals("EASY")) {
             AI playerAI = new AI();
             playerAI.setLevel(AI.Level.EASY);
             AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.MEDIUM);
+            opponentAI.setLevel(AI.Level.EASY);
             return new Object[]{playerAI, opponentAI};
         }
         if (player1.equals("MEDIUM") && player2.equals("MEDIUM")) {
@@ -161,11 +163,53 @@ public class Main {
             opponentAI.setLevel(AI.Level.MEDIUM);
             return new Object[]{playerAI, opponentAI};
         }
+        if (player1.equals("HARD") && player2.equals("HARD")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.HARD);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.HARD);
+            return new Object[]{playerAI, opponentAI};
+        }
+        if (player1.equals("EASY") && player2.equals("MEDIUM")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.EASY);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.MEDIUM);
+            return new Object[]{playerAI, opponentAI};
+        }
+        if (player1.equals("MEDIUM") && player2.equals("EASY")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.MEDIUM);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.EASY);
+            return new Object[]{playerAI, opponentAI};
+        }
+        if (player1.equals("EASY") && player2.equals("HARD")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.EASY);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.HARD);
+            return new Object[]{playerAI, opponentAI};
+        }
+        if (player1.equals("HARD") && player2.equals("EASY")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.HARD);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.EASY);
+            return new Object[]{playerAI, opponentAI};
+        }
+        if (player1.equals("MEDIUM") && player2.equals("HARD")) {
+            AI playerAI = new AI();
+            playerAI.setLevel(AI.Level.MEDIUM);
+            AI opponentAI = new AI();
+            opponentAI.setLevel(AI.Level.HARD);
+            return new Object[]{playerAI, opponentAI};
+        }
 
         AI playerAI = new AI();
-        playerAI.setLevel(AI.Level.EASY);
+        playerAI.setLevel(AI.Level.HARD);
         AI opponentAI = new AI();
-        opponentAI.setLevel(AI.Level.EASY);
+        opponentAI.setLevel(AI.Level.MEDIUM);
         return new Object[]{playerAI, opponentAI};
     }
 
@@ -178,6 +222,7 @@ public class Main {
             System.out.println();
         }
     }
+
 
     public static void generateGameField() {
         for (int i = 0; i < 5; i++) {
@@ -193,18 +238,6 @@ public class Main {
         }
     }
 
-    public static void markSymbol(String symbol) {
-        int counter = 0;
-        for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
-                if (j % 2 != 0) {
-                    continue;
-                }
-                gameField[i][j] = String.valueOf(symbol.charAt(counter));
-                counter++;
-            }
-        }
-    }
 
     public static void markSymbol(int firstCoordinate, int secondCoordinate) {
         int xCounter = 0;
@@ -227,8 +260,9 @@ public class Main {
             symbol = "O";
         }
 
-        gameField[processInputCoordinates(secondCoordinate)][firstCoordinate * 2] = symbol;
+        gameField[firstCoordinate][secondCoordinate * 2] = symbol;
     }
+
 
     public static boolean checkStateOfTheGame() {
         int xInRowCounter = 0;
@@ -343,16 +377,5 @@ public class Main {
 
         System.out.println("Draw\n");
         return true;
-    }
-
-    public static int processInputCoordinates(int coordinate) {
-        switch(coordinate) {
-            case 1:
-                coordinate = 3;
-                break;
-            case 3:
-                coordinate = 1;
-        }
-        return coordinate;
     }
 }
