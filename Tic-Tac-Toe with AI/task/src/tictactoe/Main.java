@@ -6,12 +6,25 @@ public class Main {
 
     static String[][] gameField = new String[5][9];
     static Scanner scanner = new Scanner(System.in);
+    private static String turn;
+
+    public static void swapTurn(){
+        turn = turn.equals("X") ? "O" : "X";
+    }
+
+//    public static void changePlayer(){
+//        if(player instanceof User){
+//            player =
+//        }
+//    }
+
+
 
     public static void main(String[] args) {
         while(true) {
             generateGameField();
 
-            System.out.println("Input commands: [start][user/easy/medium/hard][user/easy/medium/hard] or [exit]");
+            System.out.println("Input command:");
             String startOrEnd, whoStarts, opponent;
             while (true) {
                 try {
@@ -28,37 +41,51 @@ public class Main {
                     System.out.println("Bad parameters!");
                 }
             }
-
-            Object[] players = choosePlayersOfGame(whoStarts, opponent);
+            Object player1 = choosePlayer(whoStarts);
+            Object player2 = choosePlayer(opponent);
+            Object[] players = {player1, player2};
 
             gameLoop(players);
         }
     }
 
+    public static void loop(){}
 
     public static void gameLoop(Object[] players) {
+        turn = "X";
         if (players[0] instanceof AI && players[1] instanceof AI) {
-            AI player1 = (AI) players[0];
+            AI aiPlayer = (AI) players[0];
             AI player2 = (AI) players[1];
             while (!checkStateOfTheGame()) {
-                int[] computer1Moves = player1.move(gameField, "X");
-                markSymbol(computer1Moves[0], computer1Moves[1]);
+                aiPlayer.setAiSymbol(turn);
+                int[] computerMoves = aiPlayer.move(gameField);
+                markSymbol(computerMoves[0], computerMoves[1]);
                 printGameField();
-                if (checkStateOfTheGame()) {
-                    return;
-                }
-                int[] computer2Moves = player2.move(gameField, "O");
-                markSymbol(computer2Moves[0], computer2Moves[1]);
-                printGameField();
-                if (checkStateOfTheGame()) {
-                    return;
-                }
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+                swapTurn();
+//                int[] computer1Moves = player1.move(gameField, turn);
+//                markSymbol(computer1Moves[0], computer1Moves[1]);
+//                printGameField();
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+//                swapTurn();
+//                int[] computer2Moves = player2.move(gameField, turn);
+//                markSymbol(computer2Moves[0], computer2Moves[1]);
+//                printGameField();
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+//                swapTurn();
             }
         } else if (players[0] instanceof User && players[1] instanceof AI) {
             printGameField();
             User player1 = (User) players[0];
             AI player2 = (AI) players[1];
-            while (!checkStateOfTheGame()) {
+
+            while (true) {
                 System.out.println("Enter the coordinates:");
                 int[] userMoves = player1.move(gameField, scanner);
                 markSymbol(userMoves[0], userMoves[1]);
@@ -66,23 +93,28 @@ public class Main {
                 if (checkStateOfTheGame()) {
                     return;
                 }
-                int[] computerMoves = player2.move(gameField, "O");
+                swapTurn();
+                player2.setAiSymbol(turn);
+                int[] computerMoves = player2.move(gameField);
                 markSymbol(computerMoves[0], computerMoves[1]);
                 printGameField();
                 if (checkStateOfTheGame()) {
                     return;
                 }
+                swapTurn();
             }
         } else if (players[0] instanceof AI && players[1] instanceof User) {
             AI player1 = (AI) players[0];
+            player1.setAiSymbol(turn);
             User player2 = (User) players[1];
-            while (!checkStateOfTheGame()) {
-                int[] computerMoves = player1.move(gameField, "X");
+            while (true) {
+                int[] computerMoves = player1.move(gameField);
                 markSymbol(computerMoves[0], computerMoves[1]);
                 printGameField();
                 if (checkStateOfTheGame()) {
                     return;
                 }
+                swapTurn();
                 System.out.println("Enter the coordinates:");
                 int[] userMoves = player2.move(gameField, scanner);
                 markSymbol(userMoves[0], userMoves[1]);
@@ -90,127 +122,67 @@ public class Main {
                 if (checkStateOfTheGame()) {
                     return;
                 }
+                swapTurn();
             }
         } else if (players[0] instanceof User && players[1] instanceof User){
             printGameField();
-            User player1 = (User) players[0];
-            User player2 = (User) players[1];
+            User player = (User) players[0];
+//            User player2 = (User) players[1];
             while (!checkStateOfTheGame()) {
                 System.out.println("Enter the coordinates:");
-                int[] user1Moves = player1.move(gameField, scanner);
-                markSymbol(user1Moves[0], user1Moves[1]);
+                int[] userMoves = player.move(gameField, scanner);
+                markSymbol(userMoves[0], userMoves[1]);
                 printGameField();
-                if (checkStateOfTheGame()) {
-                    return;
-                }
-                System.out.println("Enter the coordinates:");
-                int[] user2Moves = player2.move(gameField, scanner);
-                markSymbol(user2Moves[0], user2Moves[1]);
-                printGameField();
-                if (checkStateOfTheGame()) {
-                    return;
-                }
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+                swapTurn();
+//                System.out.println("Enter the coordinates:");
+//                int[] user1Moves = player1.move(gameField, scanner);
+//                markSymbol(user1Moves[0], user1Moves[1]);
+//                printGameField();
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+//                swapTurn();
+//                System.out.println("Enter the coordinates:");
+//                int[] user2Moves = player2.move(gameField, scanner);
+//                markSymbol(user2Moves[0], user2Moves[1]);
+//                printGameField();
+//                if (checkStateOfTheGame()) {
+//                    return;
+//                }
+//                swapTurn();
             }
         }
     }
 
 
-    public static Object[] choosePlayersOfGame(String player1, String player2){
-        if(player1.equals("USER") && player2.equals("USER")) {
-            return new Object[]{new User("User 1"), new User("User 2")};
+    public static Object choosePlayer(String player){
+        User user = null;
+        AI ai = null;
+        switch (player.toUpperCase()) {
+            case ("USER"):
+                user = new User("User");
+                break;
+            case ("EASY"):
+                ai = new AI(AI.Level.EASY);
+                break;
+            case ("MEDIUM"):
+                ai= new AI(AI.Level.MEDIUM);
+                break;
+            case ("HARD"):
+                ai = new AI(AI.Level.HARD);
+                break;
         }
-        if (player1.equals("USER") && player2.equals("EASY")) {
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.EASY);
-            return new Object[]{new User("User 1"), opponentAI};
-        }
-        if (player1.equals("USER") && player2.equals("MEDIUM")) {
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.MEDIUM);
-            return new Object[]{new User("User 1"), opponentAI};
-        }
-        if (player1.equals("USER") && player2.equals("HARD")) {
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.HARD);
-            return new Object[]{new User("User 1"), opponentAI};
-        }
-        if (player1.equals("EASY") && player2.equals("USER")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.EASY);
-            return new Object[]{playerAI, new User("User 2")};
-        }
-        if (player1.equals("MEDIUM") && player2.equals("USER")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.MEDIUM);
-            return new Object[]{playerAI, new User("User 2")};
-        }
-        if (player1.equals("HARD") && player2.equals("USER")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.HARD);
-            return new Object[]{playerAI, new User("User 2")};
-        }
-        if (player1.equals("EASY") && player2.equals("EASY")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.EASY);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.EASY);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("MEDIUM") && player2.equals("MEDIUM")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.MEDIUM);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.MEDIUM);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("HARD") && player2.equals("HARD")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.HARD);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.HARD);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("EASY") && player2.equals("MEDIUM")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.EASY);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.MEDIUM);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("MEDIUM") && player2.equals("EASY")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.MEDIUM);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.EASY);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("EASY") && player2.equals("HARD")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.EASY);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.HARD);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("HARD") && player2.equals("EASY")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.HARD);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.EASY);
-            return new Object[]{playerAI, opponentAI};
-        }
-        if (player1.equals("MEDIUM") && player2.equals("HARD")) {
-            AI playerAI = new AI();
-            playerAI.setLevel(AI.Level.MEDIUM);
-            AI opponentAI = new AI();
-            opponentAI.setLevel(AI.Level.HARD);
-            return new Object[]{playerAI, opponentAI};
+        Object playerObject;
+        if (ai != null) {
+            playerObject = ai;
+        } else {
+            playerObject = user;
         }
 
-        AI playerAI = new AI();
-        playerAI.setLevel(AI.Level.HARD);
-        AI opponentAI = new AI();
-        opponentAI.setLevel(AI.Level.MEDIUM);
-        return new Object[]{playerAI, opponentAI};
+        return playerObject;
     }
 
 
@@ -240,27 +212,28 @@ public class Main {
 
 
     public static void markSymbol(int firstCoordinate, int secondCoordinate) {
-        int xCounter = 0;
-        int yCounter = 0;
+//        int xCounter = 0;
+//        int yCounter = 0;
+//
+//        for (int i = 1; i < 4; i++) {
+//            for (int j = 1; j < 7; j++) {
+//                if (gameField[i][j].equals("X")) {
+//                    xCounter++;
+//                } else if (gameField[i][j].equals("O")) {
+//                    yCounter++;
+//                }
+//            }
+//        }
 
-        for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
-                if (gameField[i][j].equals("X")) {
-                    xCounter++;
-                } else if (gameField[i][j].equals("O")) {
-                    yCounter++;
-                }
-            }
-        }
+//        String symbol;
+//        if (xCounter == yCounter) {
+//            symbol = "X";
+//        } else {
+//            symbol = "O";
+//        }
 
-        String symbol;
-        if (xCounter == yCounter) {
-            symbol = "X";
-        } else {
-            symbol = "O";
-        }
-
-        gameField[firstCoordinate][secondCoordinate * 2] = symbol;
+//        gameField[firstCoordinate][secondCoordinate * 2] = symbol;
+        gameField[firstCoordinate][secondCoordinate * 2] = turn;
     }
 
 
@@ -270,7 +243,7 @@ public class Main {
 
         /* In row check */
         for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
+            for (int j = 2; j < 7; j++) {
                 if (gameField[i][j].equals("X")) {
                     xInRowCounter++;
                 } else if (gameField[i][j].equals("O")) {
@@ -292,7 +265,7 @@ public class Main {
         xInRowCounter = 0;
         oInRowCounter = 0;
         /* In column check */
-        for (int j = 1; j < 7; j++) {
+        for (int j = 2; j < 7; j++) {
             for (int i = 1; i < 4; i++) {
                 if (j % 2 != 0) {
                     continue;
@@ -319,7 +292,7 @@ public class Main {
         oInRowCounter = 0;
         /* Cross check 1st diagonal */
         for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
+            for (int j = 2; j < 7; j++) {
                 if (j % 2 != 0) {
                     continue;
                 }
@@ -343,7 +316,7 @@ public class Main {
         oInRowCounter = 0;
         /* Cross check 2nd diagonal */
         for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
+            for (int j = 2; j < 7; j++) {
                 if (j % 2 != 0) {
                     continue;
                 }
@@ -364,7 +337,7 @@ public class Main {
         }
 
         for (int i = 1; i < 4; i++) {
-            for (int j = 1; j < 7; j++) {
+            for (int j = 2; j < 7; j++) {
                 if (j % 2 != 0) {
                     continue;
                 }
